@@ -1,0 +1,47 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.dialog {
+  position: relative;
+  background: var(--background, #fff);
+  color: var(--foreground, #171717);
+  border-radius: 8px;
+  max-width: 700px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  font-family: var(--font-geist-sans);
+  box-shadow: 0 5px 40px rgba(0, 0, 0, 0.16), 0 5px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Close button is designed to sit on the gradient header every ProjectModal
+   renders at the top of this dialog's content. */
+.closeButton {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(255, 255, 255, 0.18);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+}

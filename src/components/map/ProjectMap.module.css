@@ -1,0 +1,39 @@
+.wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+}
+
+/* Tint the OpenStreetMap tiles toward a green palette. Markers render in a
+   separate pane and are unaffected. */
+.map :global(.leaflet-tile-pane) {
+  filter: sepia(0.4) hue-rotate(62deg) saturate(1.8) brightness(0.96);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-family: var(--font-geist-sans);
+}
+
+.error {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-family: var(--font-geist-sans);
+  font-size: 13px;
+}

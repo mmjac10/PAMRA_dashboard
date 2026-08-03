@@ -1,0 +1,15 @@
+.tooltip {
+  font-family: var(--font-geist-sans);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.name {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.health {
+  font-weight: 600;
+  margin-top: 2px;
+}

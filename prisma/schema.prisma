@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MilestoneType {
+  PHYSICAL
+  COST
+}
+
+enum ProjectStatus {
+  PLANNED
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+}
+
+enum ProjectHealth {
+  ON_TRACK
+  AT_RISK
+  DELAYED
+}
+
+enum ProjectType {
+  NEW
+  MAINTENANCE_REPAIR
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime @default(now())
+}
+
+model Subengineer {
+  id       String    @id @default(cuid())
+  name     String
+  contact  String?
+  projects Project[]
+}
+
+model Project {
+  id            String        @id @default(cuid())
+  name          String
+  latitude      Float
+  longitude     Float
+  cost          Decimal       @db.Decimal(14, 2)
+  status        ProjectStatus @default(IN_PROGRESS)
+  health        ProjectHealth @default(ON_TRACK)
+  type          ProjectType   @default(NEW)
+  subengineer   Subengineer   @relation(fields: [subengineerId], references: [id])
+  subengineerId String
+  milestones    Milestone[]
+  bottlenecks   Bottleneck[]
+  sitePhotos    SitePhoto[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([latitude, longitude])
+  @@index([subengineerId])
+}
+
+model Milestone {
+  id             String        @id @default(cuid())
+  project        Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId      String
+  type           MilestoneType
+  title          String
+  description    String?
+  targetDate     DateTime?
+  achievedDate   DateTime?
+  targetValue    Decimal?      @db.Decimal(14, 2)
+  achievedValue  Decimal?      @db.Decimal(14, 2)
+
+  @@index([projectId])
+}
+
+model Bottleneck {
+  id          String             @id @default(cuid())
+  project     Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String
+  description String
+  createdAt   DateTime           @default(now())
+  photos      BottleneckPhoto[]
+
+  @@index([projectId])
+}
+
+model BottleneckPhoto {
+  id           String     @id @default(cuid())
+  bottleneck   Bottleneck @relation(fields: [bottleneckId], references: [id], onDelete: Cascade)
+  bottleneckId String
+  imageData    Bytes
+  contentType  String
+  createdAt    DateTime   @default(now())
+
+  @@index([bottleneckId])
+}
+
+model SitePhoto {
+  id          String   @id @default(cuid())
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String
+  imageData   Bytes
+  contentType String
+  weekOf      DateTime
+  uploadedAt  DateTime @default(now())
+
+  @@index([projectId])
+}
