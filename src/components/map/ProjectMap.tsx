@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import ProjectMarker from "./ProjectMarker";
+import PunjabMask from "./PunjabMask";
 import Legend from "./Legend";
+import StatusFilterBar, { type StatusFilterValue } from "./StatusFilterBar";
 import ProjectModal from "@/components/project/ProjectModal";
-import SignOutButton from "@/components/ui/SignOutButton";
 import type { ProjectSummary } from "@/types/project";
 import styles from "./ProjectMap.module.css";
 
@@ -18,32 +19,18 @@ const PUNJAB_BOUNDS: [[number, number], [number, number]] = [
   [35.0, 76.5],
 ];
 
-export default function ProjectMap() {
-  const [projects, setProjects] = useState<ProjectSummary[]>([]);
-  const [error, setError] = useState<string | null>(null);
+export default function ProjectMap({
+  projects,
+  error,
+  statusFilter,
+  onStatusFilterChange,
+}: {
+  projects: ProjectSummary[];
+  error: string | null;
+  statusFilter: StatusFilterValue;
+  onStatusFilterChange: (value: StatusFilterValue) => void;
+}) {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    fetch("/api/projects")
-      .then((res) => {
-        if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
-        return res.json() as Promise<ProjectSummary[]>;
-      })
-      .then((data) => {
-        if (!cancelled) setProjects(data);
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Failed to load projects");
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   return (
     <div className={styles.wrapper}>
@@ -55,16 +42,19 @@ export default function ProjectMap() {
         minZoom={6}
         maxBounds={PUNJAB_BOUNDS}
         maxBoundsViscosity={0.8}
+        zoomControl={false}
         className={styles.map}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+        <PunjabMask />
         {projects.map((project) => (
           <ProjectMarker key={project.id} project={project} onSelect={setSelectedProjectId} />
         ))}
       </MapContainer>
+      <StatusFilterBar value={statusFilter} onChange={onStatusFilterChange} />
       <Legend />
       {selectedProjectId && (
         <ProjectModal projectId={selectedProjectId} onClose={() => setSelectedProjectId(null)} />

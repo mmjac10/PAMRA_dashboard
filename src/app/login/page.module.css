@@ -4,7 +4,7 @@
   justify-content: center;
   height: 100vh;
   font-family: var(--font-geist-sans);
-  background: #f9fafb;
+  background: radial-gradient(ellipse 80% 60% at 50% 20%, #0d2b22 0%, var(--bg-deep) 60%);
 }
 
 .form {
@@ -13,15 +13,18 @@
   gap: 14px;
   width: 320px;
   padding: 28px;
-  border-radius: 10px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+  background: var(--bg-panel);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), var(--glow-green);
 }
 
 .heading {
   font-size: 18px;
   margin-bottom: 4px;
+  color: var(--text-primary);
 }
 
 .label {
@@ -29,14 +32,22 @@
   flex-direction: column;
   gap: 4px;
   font-size: 13px;
-  color: #374151;
+  color: var(--text-secondary);
 }
 
 .input {
   padding: 8px 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-glass);
   border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
   font-size: 14px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent-light);
+  box-shadow: 0 0 0 3px rgba(34, 229, 160, 0.15);
 }
 
 .button {
@@ -44,19 +55,21 @@
   padding: 10px;
   border: none;
   border-radius: 6px;
-  background: #15803d;
-  color: #fff;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-cyan) 100%);
+  color: #04140f;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
+  box-shadow: var(--glow-green);
 }
 
 .button:disabled {
   opacity: 0.6;
   cursor: default;
+  box-shadow: none;
 }
 
 .error {
-  color: #991b1b;
+  color: var(--status-critical);
   font-size: 13px;
 }

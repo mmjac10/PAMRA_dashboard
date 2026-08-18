@@ -16,7 +16,6 @@ export default function PhotoGallery({ photos }: { photos: SitePhotoDTO[] }) {
             alt={`Site photo for week of ${formatDate(photo.weekOf)}`}
             className={styles.photo}
           />
-          <figcaption className={styles.caption}>Week of {formatDate(photo.weekOf)}</figcaption>
         </figure>
       ))}
     </div>

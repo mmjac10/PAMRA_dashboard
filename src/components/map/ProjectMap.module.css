@@ -2,17 +2,29 @@
   position: relative;
   width: 100%;
   height: 100%;
+  background: var(--bg-deep);
 }
 
 .map {
   width: 100%;
   height: 100%;
+  background: var(--bg-deep) !important;
 }
 
-/* Tint the OpenStreetMap tiles toward a green palette. Markers render in a
+/* Classic "dark mode map" trick: inverting then rotating the hue back
+   restores relative colors while swapping light/dark roles, so the light
+   OSM basemap reads as a dark, futuristic surface. Markers render in a
    separate pane and are unaffected. */
 .map :global(.leaflet-tile-pane) {
-  filter: sepia(0.4) hue-rotate(62deg) saturate(1.8) brightness(0.96);
+  filter: invert(1) hue-rotate(185deg) brightness(0.9) contrast(1.15) saturate(0.55);
+}
+
+/* Leaflet's tooltip pane defaults to z-index 650, which sits below the
+   dashboard's absolutely-positioned side panels and header (z-index 1000+).
+   Raise it above all of them (but below the modal) so hover tooltips are
+   never clipped or hidden underneath other UI. */
+.map :global(.leaflet-tooltip-pane) {
+  z-index: 1600;
 }
 
 .loading {
@@ -20,6 +32,7 @@
   align-items: center;
   justify-content: center;
   height: 100%;
+  color: var(--text-secondary);
   font-family: var(--font-geist-sans);
 }
 
@@ -29,11 +42,12 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  background: #fef2f2;
-  color: #991b1b;
-  border: 1px solid #fecaca;
+  background: rgba(30, 10, 10, 0.85);
+  color: var(--status-critical);
+  border: 1px solid rgba(248, 113, 113, 0.35);
   border-radius: 6px;
   padding: 8px 14px;
   font-family: var(--font-geist-sans);
   font-size: 13px;
+  backdrop-filter: blur(8px);
 }

@@ -12,17 +12,14 @@ export type ProjectSummary = {
   health: ProjectHealth;
   status: ProjectStatus;
   type: ProjectType;
+  workDoneAmount: number | null;
+  percentWorkDone: number | null;
 };
 
-export type MilestoneDTO = {
-  id: string;
-  type: "PHYSICAL" | "COST";
-  title: string;
-  description: string | null;
-  targetDate: string | null;
-  achievedDate: string | null;
-  targetValue: number | null;
-  achievedValue: number | null;
+export type ScopeItemDTO = {
+  item: string;
+  quantity: string | null;
+  progress: string | null;
 };
 
 export type BottleneckDTO = {
@@ -40,12 +37,18 @@ export type SitePhotoDTO = {
 export type ProjectDetail = {
   id: string;
   name: string;
+  latitude: number;
+  longitude: number;
   cost: number;
   status: ProjectStatus;
   health: ProjectHealth;
   subengineerName: string;
-  subengineerContact: string | null;
-  milestones: MilestoneDTO[];
+  location: string | null;
+  adminApproval: number | null;
+  workOrderAmount: number | null;
+  workDoneAmount: number | null;
+  percentWorkDone: number | null;
+  scopeOfWork: ScopeItemDTO[];
   bottlenecks: BottleneckDTO[];
   sitePhotos: SitePhotoDTO[];
 };

@@ -1,0 +1,82 @@
+# Deploys the app and its database together on one host via `docker compose up -d`.
+# Requires a .env file (same directory) with:
+#   POSTGRES_PASSWORD=<pick a strong password>
+#   AUTH_SECRET=<NextAuth session secret>
+#
+# First-time setup on a fresh host:
+#   docker compose up -d              # starts db, waits for it to be healthy,
+#                                      # runs pending migrations, then starts the app
+#   docker compose run --rm seed      # one-time only — see warning below
+
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dashboard_app
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: dashboard_tracker
+    volumes:
+      # Named volume — survives `docker compose down`, image rebuilds, and
+      # `docker compose up` re-runs. Only `docker compose down -v` deletes it.
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dashboard_app -d dashboard_tracker"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # One-off: applies pending Prisma migrations. Runs on every `up`, but
+  # `migrate deploy` is a no-op when there's nothing pending, so this is safe
+  # to leave in the normal startup path (unlike seeding, below).
+  migrate:
+    build:
+      context: .
+      dockerfile: src/Dockerfile
+      target: migrator
+    environment:
+      DATABASE_URL: postgresql://dashboard_app:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/dashboard_tracker?schema=public
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # One-off: NOT wired into `app`'s dependencies on purpose. prisma/seed.ts
+  # deletes all existing rows before inserting the demo dataset — running it
+  # again after you've entered real data would destroy that data. Run it
+  # manually exactly once, on first deploy:
+  #   docker compose run --rm seed
+  seed:
+    build:
+      context: .
+      dockerfile: src/Dockerfile
+      target: migrator
+    command: ["npx", "prisma", "db", "seed"]
+    environment:
+      DATABASE_URL: postgresql://dashboard_app:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/dashboard_tracker?schema=public
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - tools # excluded from `docker compose up` — only runs via `run --rm seed`
+
+  app:
+    build:
+      context: .
+      dockerfile: src/Dockerfile
+      target: runner
+    image: constructiondashboard
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://dashboard_app:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/dashboard_tracker?schema=public
+      AUTH_SECRET: ${AUTH_SECRET:?set AUTH_SECRET in .env}
+      AUTH_TRUST_HOST: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  pgdata:

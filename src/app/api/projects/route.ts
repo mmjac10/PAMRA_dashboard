@@ -13,6 +13,8 @@ export async function GET() {
       health: true,
       status: true,
       type: true,
+      workDoneAmount: true,
+      percentWorkDone: true,
       subengineer: { select: { name: true } },
     },
     orderBy: { name: "asc" },
@@ -28,6 +30,8 @@ export async function GET() {
     health: project.health,
     status: project.status,
     type: project.type,
+    workDoneAmount: project.workDoneAmount !== null ? Number(project.workDoneAmount) : null,
+    percentWorkDone: project.percentWorkDone,
   }));
 
   return NextResponse.json(data);

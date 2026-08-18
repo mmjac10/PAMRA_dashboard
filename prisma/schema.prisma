@@ -10,11 +10,6 @@ datasource db {
   provider = "postgresql"
 }
 
-enum MilestoneType {
-  PHYSICAL
-  COST
-}
-
 enum ProjectStatus {
   PLANNED
   IN_PROGRESS
@@ -49,37 +44,39 @@ model Subengineer {
 }
 
 model Project {
-  id            String        @id @default(cuid())
-  name          String
-  latitude      Float
-  longitude     Float
-  cost          Decimal       @db.Decimal(14, 2)
-  status        ProjectStatus @default(IN_PROGRESS)
-  health        ProjectHealth @default(ON_TRACK)
-  type          ProjectType   @default(NEW)
-  subengineer   Subengineer   @relation(fields: [subengineerId], references: [id])
-  subengineerId String
-  milestones    Milestone[]
-  bottlenecks   Bottleneck[]
-  sitePhotos    SitePhoto[]
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id              String        @id @default(cuid())
+  name            String
+  latitude        Float
+  longitude       Float
+  cost            Decimal       @db.Decimal(14, 2)
+  status          ProjectStatus @default(IN_PROGRESS)
+  health          ProjectHealth @default(ON_TRACK)
+  type            ProjectType   @default(NEW)
+  location        String?
+  adminApproval   Decimal?      @db.Decimal(14, 2)
+  workOrderAmount Decimal?      @db.Decimal(14, 2)
+  workDoneAmount  Decimal?      @db.Decimal(14, 2)
+  percentWorkDone Int?
+  scopeItems      ScopeItem[]
+  subengineer     Subengineer   @relation(fields: [subengineerId], references: [id])
+  subengineerId   String
+  bottlenecks     Bottleneck[]
+  sitePhotos      SitePhoto[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   @@index([latitude, longitude])
   @@index([subengineerId])
 }
 
-model Milestone {
-  id             String        @id @default(cuid())
-  project        Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId      String
-  type           MilestoneType
-  title          String
-  description    String?
-  targetDate     DateTime?
-  achievedDate   DateTime?
-  targetValue    Decimal?      @db.Decimal(14, 2)
-  achievedValue  Decimal?      @db.Decimal(14, 2)
+model ScopeItem {
+  id        String   @id @default(cuid())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+  item      String
+  quantity  String?
+  progress  String?
+  order     Int      @default(0)
 
   @@index([projectId])
 }
