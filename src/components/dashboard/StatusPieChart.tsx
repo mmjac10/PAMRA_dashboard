@@ -108,9 +108,9 @@ export default function StatusPieChart({ projects }: { projects: ProjectSummary[
           <defs>
             {data.map((entry) => (
               <radialGradient key={entry.key} id={`pieGradient-${entry.key}`} cx="35%" cy="30%" r="75%">
-                <stop offset="0%" stopColor="#ffffff" stopOpacity={0.5} />
-                <stop offset="45%" stopColor={entry.fill} stopOpacity={1} />
-                <stop offset="100%" stopColor={entry.fill} stopOpacity={0.8} />
+                <stop offset="0%" stopColor={entry.fill} stopOpacity={1} />
+                <stop offset="55%" stopColor={entry.fill} stopOpacity={1} />
+                <stop offset="100%" stopColor={entry.fill} stopOpacity={0.85} />
               </radialGradient>
             ))}
           </defs>
@@ -124,7 +124,7 @@ export default function StatusPieChart({ projects }: { projects: ProjectSummary[
             outerRadius={PIE_OUTER_RADIUS}
             isAnimationActive={false}
             label={renderLabel}
-            labelLine={{ stroke: "rgba(234,246,241,0.35)", strokeWidth: 1 }}
+            labelLine={false}
             shape={renderShape}
             onMouseEnter={(_, index) => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}

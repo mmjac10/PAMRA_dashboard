@@ -480,15 +480,15 @@ async function main() {
   await db.subengineer.deleteMany();
   await db.user.deleteMany();
 
-  const devPasswordHash = await bcrypt.hash("ChangeMe123!", 12);
+  const adminPasswordHash = await bcrypt.hash("Change321!", 12);
   await db.user.create({
     data: {
-      email: "engineer@example.com",
-      passwordHash: devPasswordHash,
-      name: "Dev Engineer",
+      email: "dg.pamra",
+      passwordHash: adminPasswordHash,
+      name: "DG PAMRA",
     },
   });
-  console.log("Seeded dev login: engineer@example.com / ChangeMe123!");
+  console.log("Seeded login: dg.pamra / Change321!");
 
   const subengineers = [];
   for (const subengineer of SUBENGINEERS) {

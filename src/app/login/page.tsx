@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react";
 import styles from "./page.module.css";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -16,7 +16,7 @@ export default function LoginPage() {
     setError(null);
 
     const result = await signIn("credentials", {
-      email,
+      username,
       password,
       redirect: false,
     });
@@ -24,7 +24,7 @@ export default function LoginPage() {
     setSubmitting(false);
 
     if (!result || result.error) {
-      setError("Invalid email or password.");
+      setError("Invalid username or password.");
       return;
     }
 
@@ -36,12 +36,12 @@ export default function LoginPage() {
       <form className={styles.form} onSubmit={handleSubmit}>
         <h1 className={styles.heading}>Punjab Project Dashboard</h1>
         <label className={styles.label}>
-          Email
+          Username
           <input
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
+            type="text"
+            autoComplete="username"
+            value={username}
+            onChange={(event) => setUsername(event.target.value)}
             required
             className={styles.input}
           />

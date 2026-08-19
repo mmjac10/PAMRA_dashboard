@@ -13,21 +13,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     Credentials({
       credentials: {
-        email: {},
+        username: {},
         password: {},
       },
       authorize: async (credentials) => {
-        const email = credentials?.email;
+        const username = credentials?.username;
         const password = credentials?.password;
-        if (typeof email !== "string" || typeof password !== "string") {
+        if (typeof username !== "string" || typeof password !== "string") {
           return null;
         }
 
-        if (isRateLimited(`login:${email.toLowerCase()}`, LOGIN_ATTEMPT_LIMIT, LOGIN_WINDOW_MS)) {
+        if (isRateLimited(`login:${username.toLowerCase()}`, LOGIN_ATTEMPT_LIMIT, LOGIN_WINDOW_MS)) {
           return null;
         }
 
-        const user = await db.user.findUnique({ where: { email } });
+        const user = await db.user.findUnique({ where: { email: username } });
         if (!user) return null;
 
         const passwordMatches = await bcrypt.compare(password, user.passwordHash);

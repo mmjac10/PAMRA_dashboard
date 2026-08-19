@@ -6,7 +6,11 @@ import { formatCompactCurrency, formatCurrency } from "@/lib/format";
 import { CHART_HEIGHT, CHART_TICK_SIZE, CHART_LEGEND_SIZE, CHART_TOOLTIP_SIZE } from "@/lib/globalConstants";
 
 const SPENT_COLOR = "#22e5a0";
-const REMAINING_OPACITY = 0.3;
+// A solid darker green rather than SPENT_COLOR at reduced opacity — Recharts'
+// <Legend> swatch renders a bar's `fill` directly and ignores `fillOpacity`,
+// so a translucent fill made the legend key look identical to "Spent" even
+// though the bar itself reads darker against the panel background.
+const REMAINING_COLOR = "#164a37";
 
 type BudgetDatum = {
   serial: number;
@@ -85,8 +89,7 @@ export default function BudgetChart({ projects }: { projects: ProjectSummary[] }
             dataKey="remaining"
             stackId="budget"
             name="Remaining"
-            fill={SPENT_COLOR}
-            fillOpacity={REMAINING_OPACITY}
+            fill={REMAINING_COLOR}
             radius={[3, 3, 0, 0]}
             maxBarSize={22}
           />
