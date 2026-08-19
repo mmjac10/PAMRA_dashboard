@@ -32,15 +32,6 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  // Produces a self-contained .next/standalone build (traced deps only,
-  // no full node_modules) — what the Docker runtime image copies in.
-  output: "standalone",
-  // The Prisma query engine binary is loaded dynamically at runtime rather
-  // than via a static import, so Next's file tracer can miss it. Force it
-  // to be included so the standalone build works inside the container.
-  outputFileTracingIncludes: {
-    "/*": ["./src/generated/prisma/**/*"],
-  },
   async headers() {
     return [
       {

@@ -2,6 +2,15 @@
 # Requires a .env file (same directory) with:
 #   POSTGRES_PASSWORD=<pick a strong password>
 #   AUTH_SECRET=<NextAuth session secret>
+#   DOCKERHUB_USER=<your Docker Hub username>
+#
+# One image (src/Dockerfile) is used for all three roles below — app,
+# migrate, and seed only differ by which `command:` they run.
+#
+# On a low-RAM host, build/push from a real machine instead of building here:
+#   (on your dev machine)  docker compose build app && docker compose push app
+#   (on the target host)   docker compose pull app && docker compose up -d
+# `docker compose up --build` still works fine on hosts with enough RAM to build.
 #
 # First-time setup on a fresh host:
 #   docker compose up -d              # starts db, waits for it to be healthy,
@@ -30,10 +39,11 @@ services:
   # `migrate deploy` is a no-op when there's nothing pending, so this is safe
   # to leave in the normal startup path (unlike seeding, below).
   migrate:
+    image: ${DOCKERHUB_USER:?set DOCKERHUB_USER in .env}/constructiondashboard:latest
     build:
       context: .
       dockerfile: src/Dockerfile
-      target: migrator
+    command: ["npx", "prisma", "migrate", "deploy"]
     environment:
       DATABASE_URL: postgresql://dashboard_app:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/dashboard_tracker?schema=public
     depends_on:
@@ -46,10 +56,10 @@ services:
   # manually exactly once, on first deploy:
   #   docker compose run --rm seed
   seed:
+    image: ${DOCKERHUB_USER:?set DOCKERHUB_USER in .env}/constructiondashboard:latest
     build:
       context: .
       dockerfile: src/Dockerfile
-      target: migrator
     command: ["npx", "prisma", "db", "seed"]
     environment:
       DATABASE_URL: postgresql://dashboard_app:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/dashboard_tracker?schema=public
@@ -60,11 +70,10 @@ services:
       - tools # excluded from `docker compose up` — only runs via `run --rm seed`
 
   app:
+    image: ${DOCKERHUB_USER:?set DOCKERHUB_USER in .env}/constructiondashboard:latest
     build:
       context: .
       dockerfile: src/Dockerfile
-      target: runner
-    image: constructiondashboard
     restart: unless-stopped
     ports:
       - "3000:3000"
