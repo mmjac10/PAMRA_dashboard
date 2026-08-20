@@ -24,14 +24,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         if (isRateLimited(`login:${username.toLowerCase()}`, LOGIN_ATTEMPT_LIMIT, LOGIN_WINDOW_MS)) {
+          console.warn(`[auth] login blocked (rate limited): ${username}`);
           return null;
         }
 
         const user = await db.user.findUnique({ where: { email: username } });
-        if (!user) return null;
+        if (!user) {
+          console.warn(`[auth] login failed (unknown user): ${username}`);
+          return null;
+        }
 
         const passwordMatches = await bcrypt.compare(password, user.passwordHash);
-        if (!passwordMatches) return null;
+        if (!passwordMatches) {
+          console.warn(`[auth] login failed (bad password): ${username}`);
+          return null;
+        }
 
         return { id: user.id, email: user.email, name: user.name };
       },

@@ -45,6 +45,12 @@ export default function ProjectMap({
           maxBoundsViscosity={0.8}
           zoomControl={false}
           attributionControl={false}
+          dragging={false}
+          scrollWheelZoom={false}
+          doubleClickZoom={false}
+          touchZoom={false}
+          boxZoom={false}
+          keyboard={false}
           className={styles.map}
         >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />

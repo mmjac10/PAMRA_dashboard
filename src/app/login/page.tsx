@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { signIn } from "next-auth/react";
+import Header from "@/components/dashboard/Header";
 import styles from "./page.module.css";
 
 export default function LoginPage() {
@@ -33,35 +34,38 @@ export default function LoginPage() {
 
   return (
     <main className={styles.page}>
-      <form className={styles.form} onSubmit={handleSubmit}>
-        <h1 className={styles.heading}>Punjab Project Dashboard</h1>
-        <label className={styles.label}>
-          Username
-          <input
-            type="text"
-            autoComplete="username"
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
-            required
-            className={styles.input}
-          />
-        </label>
-        <label className={styles.label}>
-          Password
-          <input
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            required
-            className={styles.input}
-          />
-        </label>
-        {error && <p className={styles.error}>{error}</p>}
-        <button type="submit" disabled={submitting} className={styles.button}>
-          {submitting ? "Signing in…" : "Sign in"}
-        </button>
-      </form>
+      <Header />
+      <div className={styles.content}>
+        <form className={styles.form} onSubmit={handleSubmit}>
+          <h1 className={styles.heading}>Punjab Project Dashboard</h1>
+          <label className={styles.label}>
+            Username
+            <input
+              type="text"
+              autoComplete="username"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              required
+              className={styles.input}
+            />
+          </label>
+          <label className={styles.label}>
+            Password
+            <input
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+              className={styles.input}
+            />
+          </label>
+          {error && <p className={styles.error}>{error}</p>}
+          <button type="submit" disabled={submitting} className={styles.button}>
+            {submitting ? "Signing in…" : "Sign in"}
+          </button>
+        </form>
+      </div>
     </main>
   );
 }

@@ -26,8 +26,11 @@ export default function Header() {
 
   return (
     <header className={styles.header}>
-      <Image src={pamraLogo} alt="PAMRA logo" className={styles.logo} priority />
-      <h1 className={styles.title}>Punjab Agricultural Marketing Regulatory Authority</h1>
+      <div className={styles.brand}>
+        <Image src={pamraLogo} alt="PAMRA logo" className={styles.logo} priority />
+        <span className={styles.orgName}>Punjab Agricultural Marketing Regulatory Authority</span>
+      </div>
+      <h1 className={styles.title}>Infrastructure Monitoring Dashboard</h1>
       {session?.user && (
         <div className={styles.account} ref={menuRef}>
           <button

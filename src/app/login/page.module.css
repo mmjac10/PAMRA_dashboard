@@ -1,10 +1,16 @@
 .page {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   height: 100vh;
   font-family: var(--font-geist-sans);
   background: radial-gradient(ellipse 80% 60% at 50% 20%, #0d2b22 0%, var(--bg-deep) 60%);
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .form {

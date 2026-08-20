@@ -18,9 +18,14 @@ const contentSecurityPolicy = [
   "img-src 'self' data: https://*.tile.openstreetmap.org",
   "font-src 'self' data:",
   `connect-src 'self'${isDev ? " ws: wss:" : ""}`,
+  "object-src 'none'",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
+  // No-op over plain HTTP (browsers ignore it there); once this is served
+  // over HTTPS it rewrites any accidental http:// sub-resource references
+  // to https:// instead of letting them load — or block — as mixed content.
+  ...(isDev ? [] : ["upgrade-insecure-requests"]),
 ].join("; ");
 
 const securityHeaders = [
@@ -29,9 +34,22 @@ const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+  // Isolates this page's browsing context group so a window it opens (or
+  // that opens it) can't reach back in via `window.opener`.
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  // Browsers ignore this over plain HTTP, so it's a no-op in local dev and
+  // only takes effect once this is actually deployed behind HTTPS — at
+  // which point it forces HTTPS for this host (and subdomains) for two
+  // years, including on the very first request via the HSTS preload list.
+  ...(isDev
+    ? []
+    : [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" }]),
 ];
 
 const nextConfig: NextConfig = {
+  // Stop advertising the framework in responses (`X-Powered-By: Next.js`) —
+  // no functional benefit to leaking that for free.
+  poweredByHeader: false,
   async headers() {
     return [
       {

@@ -11,6 +11,7 @@ const SPENT_COLOR = "#22e5a0";
 // so a translucent fill made the legend key look identical to "Spent" even
 // though the bar itself reads darker against the panel background.
 const REMAINING_COLOR = "#164a37";
+const LABEL_COLOR = "#c7d9d2";
 
 type BudgetDatum = {
   serial: number;
@@ -36,11 +37,11 @@ function CustomTooltip({ active, payload }: TooltipContentProps) {
       }}
     >
       <div style={{ fontWeight: 600, color: "#eaf6f1", marginBottom: 4 }}>{datum.name}</div>
-      <div style={{ color: "#22e5a0" }}>
-        Spent: <strong>{formatCurrency(datum.spent)}</strong>
+      <div style={{ color: LABEL_COLOR }}>
+        Spent: <strong style={{ color: SPENT_COLOR }}>{formatCurrency(datum.spent)}</strong>
       </div>
-      <div style={{ color: "#9db3ac" }}>
-        Remaining: <strong>{formatCurrency(datum.remaining)}</strong>
+      <div style={{ color: LABEL_COLOR }}>
+        Remaining: <strong style={{ color: REMAINING_COLOR }}>{formatCurrency(datum.remaining)}</strong>
       </div>
     </div>
   );
@@ -82,7 +83,8 @@ export default function BudgetChart({ projects }: { projects: ProjectSummary[] }
             verticalAlign="top"
             height={26}
             iconType="square"
-            wrapperStyle={{ fontSize: CHART_LEGEND_SIZE, color: "#c7d9d2" }}
+            wrapperStyle={{ fontSize: CHART_LEGEND_SIZE }}
+            labelStyle={{ color: LABEL_COLOR }}
           />
           <Bar dataKey="spent" stackId="budget" name="Spent" fill={SPENT_COLOR} maxBarSize={22} />
           <Bar
