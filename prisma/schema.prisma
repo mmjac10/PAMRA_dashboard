@@ -37,10 +37,13 @@ model User {
 }
 
 model Subengineer {
-  id       String    @id @default(cuid())
-  name     String
-  contact  String?
-  projects Project[]
+  id           String       @id @default(cuid())
+  name         String
+  contact      String?
+  email        String?      @unique
+  passwordHash String?
+  projects     Project[]
+  siteUpdates  SiteUpdate[]
 }
 
 model Project {
@@ -62,6 +65,7 @@ model Project {
   subengineerId   String
   bottlenecks     Bottleneck[]
   sitePhotos      SitePhoto[]
+  siteUpdates     SiteUpdate[]
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
@@ -113,4 +117,29 @@ model SitePhoto {
   uploadedAt  DateTime @default(now())
 
   @@index([projectId])
+}
+
+model SiteUpdate {
+  id            String            @id @default(cuid())
+  project       Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId     String
+  subengineer   Subengineer       @relation(fields: [subengineerId], references: [id])
+  subengineerId String
+  remarks       String
+  submittedAt   DateTime          @default(now())
+  photos        SiteUpdatePhoto[]
+
+  @@index([projectId])
+  @@index([subengineerId])
+}
+
+model SiteUpdatePhoto {
+  id           String     @id @default(cuid())
+  siteUpdate   SiteUpdate @relation(fields: [siteUpdateId], references: [id], onDelete: Cascade)
+  siteUpdateId String
+  imageData    Bytes
+  contentType  String
+  createdAt    DateTime   @default(now())
+
+  @@index([siteUpdateId])
 }

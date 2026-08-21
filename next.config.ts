@@ -22,11 +22,12 @@ const contentSecurityPolicy = [
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
-  // No-op over plain HTTP (browsers ignore it there); once this is served
-  // over HTTPS it rewrites any accidental http:// sub-resource references
-  // to https:// instead of letting them load — or block — as mixed content.
-  ...(isDev ? [] : ["upgrade-insecure-requests"]),
 ].join("; ");
+// Deliberately no `upgrade-insecure-requests` here: unlike a response header,
+// it rewrites the page's own http:// sub-resource requests (CSS/JS/images)
+// to https:// even when the page itself was loaded over plain HTTP — which
+// breaks the app outright on any deployment that hasn't put TLS in front of
+// it yet. Add it back only once this is actually served over HTTPS.
 
 const securityHeaders = [
   { key: "Content-Security-Policy", value: contentSecurityPolicy },
